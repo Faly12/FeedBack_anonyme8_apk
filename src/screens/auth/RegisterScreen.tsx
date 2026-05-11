@@ -3,8 +3,10 @@ import { Alert, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-native'
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { signUp } from '../../services/authService';
+import { useAppTheme } from '../../theme/AppThemeContext';
 
 export default function RegisterScreen({ navigation }: any) {
+  const { theme } = useAppTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nom, setNom] = useState('');
@@ -17,7 +19,7 @@ export default function RegisterScreen({ navigation }: any) {
     }
 
     if (password.length < 6) {
-      Alert.alert('Mot de passe trop court', 'Utilisez au moins 6 caractères.');
+      Alert.alert('Mot de passe trop court', 'Utilisez au moins 6 caracteres.');
       return;
     }
 
@@ -26,23 +28,23 @@ export default function RegisterScreen({ navigation }: any) {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Inscription incomplète', error.message);
+      Alert.alert('Inscription incomplete', error.message);
       return;
     }
 
     if (data.session) {
-      Alert.alert('Inscription réussie', 'Votre compte est connecté. Vous pouvez créer un sondage.');
+      Alert.alert('Inscription reussie', 'Votre compte est connecte. Vous pouvez creer un sondage.');
       return;
     }
 
-    Alert.alert('Inscription réussie', 'Vérifiez votre e-mail, puis connectez-vous.');
+    Alert.alert('Inscription reussie', 'Verifiez votre e-mail, puis connectez-vous.');
     navigation.navigate('Login');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Créer un compte</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Creer un compte</Text>
         <Input label="Nom" placeholder="Votre nom" value={nom} onChangeText={setNom} />
         <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} />
         <Input
@@ -53,8 +55,8 @@ export default function RegisterScreen({ navigation }: any) {
           secureTextEntry
         />
         <Button title={loading ? 'Inscription...' : "S'inscrire"} onPress={handleRegister} disabled={loading} />
-        <Text style={styles.footer} onPress={() => navigation.navigate('Login')}>
-          Déjà un compte ? Connexion
+        <Text style={[styles.footer, { color: theme.primary }]} onPress={() => navigation.navigate('Login')}>
+          Deja un compte ? Connexion
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -64,7 +66,6 @@ export default function RegisterScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
   },
   content: {
     flexGrow: 1,
@@ -72,13 +73,11 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    color: '#111827',
     fontSize: 28,
     fontWeight: '800',
     marginBottom: 24,
   },
   footer: {
-    color: '#0f766e',
     fontWeight: '700',
     marginTop: 20,
     textAlign: 'center',

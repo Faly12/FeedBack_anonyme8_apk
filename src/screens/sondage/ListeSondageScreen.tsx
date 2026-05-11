@@ -5,6 +5,8 @@ import { Button } from '../../components/Button';
 import { CardSondage } from '../../components/CardSondage';
 import { Loader } from '../../components/Loader';
 import { fetchSondages } from '../../services/sondageService';
+import { useAppTheme } from '../../theme/AppThemeContext';
+import { AppTheme } from '../../theme/colors';
 import { Sondage } from '../../types';
 
 function isSondageDisponible(sondage: Sondage) {
@@ -15,6 +17,8 @@ function isSondageDisponible(sondage: Sondage) {
 }
 
 export default function ListeSondageScreen({ navigation }: any) {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const [sondages, setSondages] = useState<Sondage[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,15 +60,17 @@ export default function ListeSondageScreen({ navigation }: any) {
               setRefreshing(true);
               loadSondages();
             }}
+            tintColor={theme.primary}
+            colors={[theme.primary]}
           />
         }
         ListHeaderComponent={
           <View>
             <Text style={styles.kicker}>FeedBack Anonyme</Text>
-            <Text style={styles.title}>Liste des sondages créés</Text>
+            <Text style={styles.title}>Liste des sondages crees</Text>
             <View style={styles.actions}>
               <Button
-                title="Créer un sondage"
+                title="Creer un sondage"
                 onPress={() => navigation.navigate('CreateSondage')}
                 style={styles.primaryAction}
               />
@@ -72,7 +78,7 @@ export default function ListeSondageScreen({ navigation }: any) {
             <View style={styles.metrics}>
               <View style={styles.metric}>
                 <Text style={styles.metricValue}>{sondages.length}</Text>
-                <Text style={styles.metricLabel}>créés</Text>
+                <Text style={styles.metricLabel}>crees</Text>
               </View>
               <View style={styles.metric}>
                 <Text style={styles.metricValue}>{availableCount}</Text>
@@ -92,74 +98,75 @@ export default function ListeSondageScreen({ navigation }: any) {
             onPress={() => navigation.navigate('DetailSondage', { sondageId: item.id })}
           />
         )}
-        ListEmptyComponent={<Text style={styles.empty}>Aucun sondage créé.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>Aucun sondage cree.</Text>}
       />
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 36,
-  },
-  kicker: {
-    color: '#0f766e',
-    fontSize: 13,
-    fontWeight: '700',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#111827',
-    fontSize: 28,
-    fontWeight: '800',
-    lineHeight: 34,
-  },
-  actions: {
-    marginTop: 18,
-  },
-  primaryAction: {
-    backgroundColor: '#0f766e',
-    borderRadius: 8,
-  },
-  metrics: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 18,
-  },
-  metric: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 12,
-  },
-  metricValue: {
-    color: '#111827',
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  metricLabel: {
-    color: '#6b7280',
-    fontSize: 12,
-    marginTop: 3,
-  },
-  sectionTitle: {
-    color: '#111827',
-    fontSize: 18,
-    fontWeight: '800',
-    marginBottom: 12,
-    marginTop: 24,
-  },
-  empty: {
-    color: '#6b7280',
-    marginTop: 24,
-    textAlign: 'center',
-  },
-});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    content: {
+      padding: 20,
+      paddingBottom: 36,
+    },
+    kicker: {
+      color: theme.primary,
+      fontSize: 13,
+      fontWeight: '700',
+      marginBottom: 8,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: theme.text,
+      fontSize: 28,
+      fontWeight: '800',
+      lineHeight: 34,
+    },
+    actions: {
+      marginTop: 18,
+    },
+    primaryAction: {
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+    },
+    metrics: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 18,
+    },
+    metric: {
+      flex: 1,
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      padding: 12,
+    },
+    metricValue: {
+      color: theme.text,
+      fontSize: 22,
+      fontWeight: '800',
+    },
+    metricLabel: {
+      color: theme.textSubtle,
+      fontSize: 12,
+      marginTop: 3,
+    },
+    sectionTitle: {
+      color: theme.text,
+      fontSize: 18,
+      fontWeight: '800',
+      marginBottom: 12,
+      marginTop: 24,
+    },
+    empty: {
+      color: theme.textSubtle,
+      marginTop: 24,
+      textAlign: 'center',
+    },
+  });

@@ -6,16 +6,24 @@ import DetailSondageScreen from '../screens/sondage/DetailSondageScreen';
 import ListeSondageScreen from '../screens/sondage/ListeSondageScreen';
 import ResultatScreen from '../screens/sondage/ResultatScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import { useAppTheme } from '../theme/AppThemeContext';
+import SettingsScreen from '../screens/settings/SettingsScreen';
+import { NotificationBell } from '../components/NotificationBell';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function SondageStack() {
+  const { theme } = useAppTheme();
+
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: '#ffffff' },
-        headerTitleStyle: { color: '#111827', fontWeight: '700' },
+        contentStyle: { backgroundColor: theme.background },
+        headerStyle: { backgroundColor: theme.surface },
+        headerTintColor: theme.text,
+        headerTitleStyle: { color: theme.text, fontWeight: '700' },
+        headerRight: () => <NotificationBell />,
         headerShadowVisible: false,
       }}>
       <Stack.Screen name="ListeSondage" component={ListeSondageScreen} options={{ title: 'Sondages' }} />
@@ -27,18 +35,30 @@ function SondageStack() {
 }
 
 export default function MainNavigator() {
+  const { theme } = useAppTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: '#0f766e',
-        tabBarInactiveTintColor: '#6b7280',
-        tabBarStyle: { borderTopColor: '#e5e7eb' },
+        headerStyle: { backgroundColor: theme.surface },
+        headerTintColor: theme.text,
+        headerTitleStyle: { color: theme.text, fontWeight: '700' },
+        headerRight: () => <NotificationBell />,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.tabInactive,
+        tabBarStyle: { backgroundColor: theme.surface, borderTopColor: theme.border },
         tabBarIcon: ({ color, size }) => {
-          const iconName = route.name === 'Home' ? 'list-outline' : 'person-circle-outline';
+          const iconName =
+            route.name === 'Home'
+              ? 'list-outline'
+              : route.name === 'Settings'
+                ? 'settings-outline'
+                : 'person-circle-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}>
       <Tab.Screen name="Home" component={SondageStack} options={{ headerShown: false, title: 'Sondages' }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Parametres' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profil' }} />
     </Tab.Navigator>
   );

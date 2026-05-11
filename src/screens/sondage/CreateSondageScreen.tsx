@@ -3,10 +3,16 @@ import { Alert, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../notifications/NotificationContext';
 import { createSondage } from '../../services/sondageService';
+import { useAppTheme } from '../../theme/AppThemeContext';
+import { AppTheme } from '../../theme/colors';
 
 export default function CreateSondageScreen({ navigation }: any) {
   const { user } = useAuth();
+  const { theme } = useAppTheme();
+  const { addNotification } = useNotifications();
+  const styles = createStyles(theme);
   const [titre, setTitre] = useState('');
   const [description, setDescription] = useState('');
   const [options, setOptions] = useState(['', '', '']);
@@ -32,7 +38,7 @@ export default function CreateSondageScreen({ navigation }: any) {
     const cleanOptions = options.map((option) => option.trim()).filter(Boolean);
 
     if (!user?.id) {
-      Alert.alert('Connexion requise', 'Connectez-vous avant de créer un sondage dans Supabase.');
+      Alert.alert('Connexion requise', 'Connectez-vous avant de creer un sondage dans Supabase.');
       return;
     }
 
@@ -42,7 +48,7 @@ export default function CreateSondageScreen({ navigation }: any) {
     }
 
     if (needsPasskey && !passkey.trim()) {
-      Alert.alert('Clé requise', 'Ajoutez une clé ou désactivez l’accès par clé.');
+      Alert.alert('Cle requise', "Ajoutez une cle ou desactivez l'acces par cle.");
       return;
     }
 
@@ -75,15 +81,17 @@ export default function CreateSondageScreen({ navigation }: any) {
     }
 
     if (source === 'prototype') {
+      addNotification('Sondage cree', `Le sondage "${titre.trim()}" a ete enregistre en local.`);
       Alert.alert(
-        'Sondage créé en local',
-        `${warning ?? 'Insertion Supabase indisponible.'}\n\nIl sera visible dans l’interface, mais pas dans la base.`
+        'Sondage cree en local',
+        `${warning ?? 'Insertion Supabase indisponible.'}\n\nIl sera visible dans l'interface, mais pas dans la base.`
       );
       navigation.goBack();
       return;
     }
 
-    Alert.alert('Sondage créé', 'Votre sondage est prêt à recevoir des votes anonymes et a été enregistré dans Supabase.');
+    addNotification('Sondage cree', `Le sondage "${titre.trim()}" est pret a recevoir des votes.`);
+    Alert.alert('Sondage cree', 'Votre sondage est pret a recevoir des votes anonymes et a ete enregistre dans Supabase.');
     navigation.goBack();
   };
 
@@ -91,7 +99,7 @@ export default function CreateSondageScreen({ navigation }: any) {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.kicker}>Auteur du sondage</Text>
-        <Text style={styles.title}>Créer un nouveau sondage</Text>
+        <Text style={styles.title}>Creer un nouveau sondage</Text>
 
         <View style={styles.panel}>
           <Input label="Titre" placeholder="Ex: Satisfaction du cours" value={titre} onChangeText={setTitre} />
@@ -107,19 +115,29 @@ export default function CreateSondageScreen({ navigation }: any) {
               <Text style={styles.settingTitle}>Sondage public</Text>
               <Text style={styles.settingDescription}>Visible dans la liste des sondages consultables.</Text>
             </View>
-            <Switch value={isPublic} onValueChange={setIsPublic} trackColor={{ true: '#99f6e4' }} />
+            <Switch
+              value={isPublic}
+              onValueChange={setIsPublic}
+              thumbColor={isPublic ? theme.primary : theme.textSubtle}
+              trackColor={{ false: theme.surfaceMuted, true: theme.primarySoft }}
+            />
           </View>
 
           <View style={styles.settingRow}>
             <View style={styles.settingText}>
-              <Text style={styles.settingTitle}>Clé avant vote</Text>
-              <Text style={styles.settingDescription}>Simule l’étape “authentifier pour faire”.</Text>
+              <Text style={styles.settingTitle}>Cle avant vote</Text>
+              <Text style={styles.settingDescription}>Simule une authentification avant le vote.</Text>
             </View>
-            <Switch value={needsPasskey} onValueChange={setNeedsPasskey} trackColor={{ true: '#99f6e4' }} />
+            <Switch
+              value={needsPasskey}
+              onValueChange={setNeedsPasskey}
+              thumbColor={needsPasskey ? theme.primary : theme.textSubtle}
+              trackColor={{ false: theme.surfaceMuted, true: theme.primarySoft }}
+            />
           </View>
 
           {needsPasskey ? (
-            <Input label="Clé d’accès" placeholder="Ex: atelier2026" value={passkey} onChangeText={setPasskey} />
+            <Input label="Cle d'acces" placeholder="Ex: atelier2026" value={passkey} onChangeText={setPasskey} />
           ) : null}
         </View>
 
@@ -148,69 +166,70 @@ export default function CreateSondageScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 36,
-  },
-  kicker: {
-    color: '#0f766e',
-    fontSize: 13,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#111827',
-    fontSize: 26,
-    fontWeight: '800',
-    lineHeight: 32,
-    marginBottom: 16,
-    marginTop: 6,
-  },
-  panel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 14,
-    padding: 16,
-  },
-  panelTitle: {
-    color: '#111827',
-    fontSize: 18,
-    fontWeight: '800',
-    marginBottom: 14,
-  },
-  settingRow: {
-    alignItems: 'center',
-    borderTopColor: '#f3f4f6',
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    color: '#111827',
-    fontWeight: '800',
-  },
-  settingDescription: {
-    color: '#6b7280',
-    marginTop: 3,
-  },
-  secondaryButton: {
-    backgroundColor: '#ffffff',
-    borderColor: '#0f766e',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#0f766e',
-  },
-});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    content: {
+      padding: 20,
+      paddingBottom: 36,
+    },
+    kicker: {
+      color: theme.primary,
+      fontSize: 13,
+      fontWeight: '800',
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: theme.text,
+      fontSize: 26,
+      fontWeight: '800',
+      lineHeight: 32,
+      marginBottom: 16,
+      marginTop: 6,
+    },
+    panel: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      marginBottom: 14,
+      padding: 16,
+    },
+    panelTitle: {
+      color: theme.text,
+      fontSize: 18,
+      fontWeight: '800',
+      marginBottom: 14,
+    },
+    settingRow: {
+      alignItems: 'center',
+      borderTopColor: theme.surfaceMuted,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      gap: 12,
+      justifyContent: 'space-between',
+      paddingVertical: 14,
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingTitle: {
+      color: theme.text,
+      fontWeight: '800',
+    },
+    settingDescription: {
+      color: theme.textSubtle,
+      marginTop: 3,
+    },
+    secondaryButton: {
+      backgroundColor: theme.surface,
+      borderColor: theme.primary,
+      borderWidth: 1,
+    },
+    secondaryButtonText: {
+      color: theme.primary,
+    },
+  });

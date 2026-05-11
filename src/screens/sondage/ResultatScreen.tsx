@@ -3,9 +3,13 @@ import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-n
 import { Loader } from '../../components/Loader';
 import { fetchSondageById } from '../../services/sondageService';
 import { fetchResults } from '../../services/voteService';
+import { useAppTheme } from '../../theme/AppThemeContext';
+import { AppTheme } from '../../theme/colors';
 import { Option, Sondage } from '../../types';
 
 export default function ResultatScreen({ route }: any) {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const { sondageId } = route.params;
   const [results, setResults] = useState<Record<string, number>>({});
   const [sondage, setSondage] = useState<Sondage | null>(null);
@@ -19,7 +23,7 @@ export default function ResultatScreen({ route }: any) {
       ]);
 
       if (sondageError || countError || !sondageData) {
-        Alert.alert('Erreur', sondageError?.message ?? countError?.message ?? 'Impossible de charger les résultats.');
+        Alert.alert('Erreur', sondageError?.message ?? countError?.message ?? 'Impossible de charger les resultats.');
         setLoading(false);
         return;
       }
@@ -45,10 +49,11 @@ export default function ResultatScreen({ route }: any) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.kicker}>Consultation des résultats</Text>
-        <Text style={styles.title}>{sondage?.titre ?? 'Résultats'}</Text>
+        <Text style={styles.kicker}>Consultation des resultats</Text>
+        <Text style={styles.title}>{sondage?.titre ?? 'Resultats'}</Text>
         <Text style={styles.description}>
-          Les votes sont agrégés par option. Le jeton anonyme permet de compter la participation sans afficher l’identité.
+          Les votes sont agreges par option. Le jeton anonyme permet de compter la participation sans afficher
+          le votant.
         </Text>
 
         <View style={styles.summary}>
@@ -76,7 +81,9 @@ export default function ResultatScreen({ route }: any) {
                 <View key={item.id} style={styles.resultItem}>
                   <View style={styles.resultHeader}>
                     <Text style={styles.option}>{item.libelle}</Text>
-                    <Text style={styles.count}>{count} vote{count > 1 ? 's' : ''}</Text>
+                    <Text style={styles.count}>
+                      {count} vote{count > 1 ? 's' : ''}
+                    </Text>
                   </View>
                   <View style={styles.barTrack}>
                     <View style={[styles.barFill, { width: `${percentage}%` }]} />
@@ -86,7 +93,7 @@ export default function ResultatScreen({ route }: any) {
               );
             })
           ) : (
-            <Text style={styles.empty}>Aucune donnée de résultat.</Text>
+            <Text style={styles.empty}>Aucune donnee de resultat.</Text>
           )}
         </View>
       </ScrollView>
@@ -94,103 +101,104 @@ export default function ResultatScreen({ route }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 36,
-  },
-  kicker: {
-    color: '#0f766e',
-    fontSize: 13,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#111827',
-    fontSize: 26,
-    fontWeight: '800',
-    lineHeight: 32,
-    marginTop: 6,
-  },
-  description: {
-    color: '#4b5563',
-    lineHeight: 22,
-    marginTop: 10,
-  },
-  summary: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 18,
-  },
-  summaryItem: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 12,
-  },
-  summaryValue: {
-    color: '#111827',
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  summaryLabel: {
-    color: '#6b7280',
-    fontSize: 12,
-    marginTop: 3,
-  },
-  panel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    marginTop: 16,
-    padding: 16,
-  },
-  resultItem: {
-    marginBottom: 18,
-  },
-  resultHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
-  },
-  option: {
-    color: '#111827',
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  count: {
-    color: '#4b5563',
-    fontWeight: '700',
-  },
-  barTrack: {
-    backgroundColor: '#e5e7eb',
-    borderRadius: 8,
-    height: 12,
-    marginTop: 10,
-    overflow: 'hidden',
-  },
-  barFill: {
-    backgroundColor: '#0f766e',
-    borderRadius: 8,
-    height: '100%',
-  },
-  percentage: {
-    color: '#6b7280',
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 6,
-  },
-  empty: {
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    content: {
+      padding: 20,
+      paddingBottom: 36,
+    },
+    kicker: {
+      color: theme.primary,
+      fontSize: 13,
+      fontWeight: '800',
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: theme.text,
+      fontSize: 26,
+      fontWeight: '800',
+      lineHeight: 32,
+      marginTop: 6,
+    },
+    description: {
+      color: theme.textMuted,
+      lineHeight: 22,
+      marginTop: 10,
+    },
+    summary: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 18,
+    },
+    summaryItem: {
+      flex: 1,
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      padding: 12,
+    },
+    summaryValue: {
+      color: theme.text,
+      fontSize: 20,
+      fontWeight: '800',
+    },
+    summaryLabel: {
+      color: theme.textSubtle,
+      fontSize: 12,
+      marginTop: 3,
+    },
+    panel: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      marginTop: 16,
+      padding: 16,
+    },
+    resultItem: {
+      marginBottom: 18,
+    },
+    resultHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 10,
+      justifyContent: 'space-between',
+    },
+    option: {
+      color: theme.text,
+      flex: 1,
+      fontSize: 15,
+      fontWeight: '800',
+    },
+    count: {
+      color: theme.textMuted,
+      fontWeight: '700',
+    },
+    barTrack: {
+      backgroundColor: theme.surfaceMuted,
+      borderRadius: 8,
+      height: 12,
+      marginTop: 10,
+      overflow: 'hidden',
+    },
+    barFill: {
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      height: '100%',
+    },
+    percentage: {
+      color: theme.textSubtle,
+      fontSize: 12,
+      fontWeight: '700',
+      marginTop: 6,
+    },
+    empty: {
+      color: theme.textSubtle,
+      textAlign: 'center',
+    },
+  });

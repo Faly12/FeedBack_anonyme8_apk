@@ -1,4 +1,5 @@
 import { Pressable, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { useAppTheme } from '../theme/AppThemeContext';
 
 type ButtonProps = {
   title: string;
@@ -9,8 +10,13 @@ type ButtonProps = {
 };
 
 export function Button({ title, onPress, disabled, style, textStyle }: ButtonProps) {
+  const { theme } = useAppTheme();
+
   return (
-    <Pressable onPress={onPress} disabled={disabled} style={[styles.button, disabled && styles.disabled, style]}>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.button, { backgroundColor: theme.primary }, disabled && styles.disabled, style]}>
       <Text style={[styles.text, textStyle]}>{title}</Text>
     </Pressable>
   );
@@ -18,7 +24,6 @@ export function Button({ title, onPress, disabled, style, textStyle }: ButtonPro
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#0f766e',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 8,

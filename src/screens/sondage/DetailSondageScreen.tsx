@@ -4,12 +4,18 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Loader } from '../../components/Loader';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../notifications/NotificationContext';
 import { fermerSondage, fetchSondageById } from '../../services/sondageService';
 import { createParticipation, submitVote } from '../../services/voteService';
+import { useAppTheme } from '../../theme/AppThemeContext';
+import { AppTheme } from '../../theme/colors';
 import { Option, Sondage } from '../../types';
 import { generateAnonymousToken } from '../../utils/helpers';
 
 export default function DetailSondageScreen({ route, navigation }: any) {
+  const { theme } = useAppTheme();
+  const { addNotification } = useNotifications();
+  const styles = createStyles(theme);
   const { sondageId } = route.params;
   const { user } = useAuth();
   const [sondage, setSondage] = useState<Sondage | null>(null);
@@ -51,7 +57,7 @@ export default function DetailSondageScreen({ route, navigation }: any) {
       return;
     }
 
-    Alert.alert('Accès bloqué', 'La clé saisie ne correspond pas à ce sondage.');
+    Alert.alert('Acces bloque', 'La cle saisie ne correspond pas a ce sondage.');
   };
 
   const handleVote = async () => {
@@ -60,12 +66,12 @@ export default function DetailSondageScreen({ route, navigation }: any) {
     }
 
     if (isClosed) {
-      Alert.alert('Sondage clôturé', 'Vous pouvez uniquement consulter les résultats.');
+      Alert.alert('Sondage cloture', 'Vous pouvez uniquement consulter les resultats.');
       return;
     }
 
     if (!selectedOption) {
-      Alert.alert('Sélection obligatoire', 'Choisissez une option avant d’envoyer votre vote.');
+      Alert.alert('Selection obligatoire', "Choisissez une option avant d'envoyer votre vote.");
       return;
     }
 
@@ -84,7 +90,8 @@ export default function DetailSondageScreen({ route, navigation }: any) {
     }
 
     setSubmitting(false);
-    Alert.alert('Vote enregistré', 'Votre réponse a été envoyée avec un jeton anonyme.');
+    addNotification('Vote enregistre', `Un vote anonyme a ete ajoute a "${sondage.titre}".`);
+    Alert.alert('Vote enregistre', 'Votre reponse a ete envoyee avec un jeton anonyme.');
     navigation.navigate('Resultat', { sondageId: sondage.id });
   };
 
@@ -101,7 +108,8 @@ export default function DetailSondageScreen({ route, navigation }: any) {
     }
 
     setSondage(data);
-    Alert.alert('Sondage clôturé', 'Les utilisateurs peuvent maintenant consulter les résultats.');
+    addNotification('Sondage ferme', `Le sondage "${sondage.titre}" a ete cloture.`);
+    Alert.alert('Sondage cloture', 'Les utilisateurs peuvent maintenant consulter les resultats.');
   };
 
   if (loading) {
@@ -118,13 +126,13 @@ export default function DetailSondageScreen({ route, navigation }: any) {
         <View style={styles.header}>
           <View style={[styles.status, isClosed ? styles.closedStatus : styles.activeStatus]}>
             <Text style={[styles.statusText, isClosed ? styles.closedStatusText : styles.activeStatusText]}>
-              {isClosed ? 'Clôturé' : 'Actif'}
+              {isClosed ? 'Cloture' : 'Actif'}
             </Text>
           </View>
           <Text style={styles.title}>{sondage.titre}</Text>
           <Text style={styles.description}>{sondage.description ?? 'Aucune description'}</Text>
           <Text style={styles.meta}>
-            {totalOptions} option{totalOptions > 1 ? 's' : ''} · {sondage.passkey ? 'clé requise' : 'accès public'}
+            {totalOptions} option{totalOptions > 1 ? 's' : ''} - {sondage.passkey ? 'cle requise' : 'acces public'}
           </Text>
         </View>
 
@@ -132,14 +140,14 @@ export default function DetailSondageScreen({ route, navigation }: any) {
           <View style={styles.panel}>
             <Text style={styles.panelTitle}>Authentification requise</Text>
             <Text style={styles.panelText}>
-              Ce sondage demande une clé avant le vote. Pour la démo, essayez: {sondage.passkey}
+              Ce sondage demande une cle avant le vote. Pour la demo, essayez: {sondage.passkey}
             </Text>
-            <Input label="Clé d’accès" placeholder="Saisir la clé du sondage" value={passkey} onChangeText={setPasskey} />
-            <Button title="Débloquer le vote" onPress={handleUnlock} />
+            <Input label="Cle d'acces" placeholder="Saisir la cle du sondage" value={passkey} onChangeText={setPasskey} />
+            <Button title="Debloquer le vote" onPress={handleUnlock} />
           </View>
         ) : (
           <View style={styles.panel}>
-            <Text style={styles.panelTitle}>{isClosed ? 'Vote fermé' : 'Faire et envoyer le sondage'}</Text>
+            <Text style={styles.panelTitle}>{isClosed ? 'Vote ferme' : 'Faire et envoyer le sondage'}</Text>
             {sortedOptions.map((item: Option) => (
               <TouchableOpacity
                 key={item.id}
@@ -156,7 +164,7 @@ export default function DetailSondageScreen({ route, navigation }: any) {
 
         <View style={styles.secondaryActions}>
           <Button
-            title="Consulter les résultats"
+            title="Consulter les resultats"
             onPress={() => navigation.navigate('Resultat', { sondageId: sondage.id })}
             style={styles.secondaryButton}
             textStyle={styles.secondaryButtonText}
@@ -175,133 +183,66 @@ export default function DetailSondageScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 36,
-  },
-  header: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 18,
-  },
-  status: {
-    alignSelf: 'flex-start',
-    borderRadius: 8,
-    marginBottom: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  activeStatus: {
-    backgroundColor: '#ccfbf1',
-  },
-  closedStatus: {
-    backgroundColor: '#fee2e2',
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  activeStatusText: {
-    color: '#0f766e',
-  },
-  closedStatusText: {
-    color: '#991b1b',
-  },
-  title: {
-    color: '#111827',
-    fontSize: 26,
-    fontWeight: '800',
-    lineHeight: 32,
-  },
-  description: {
-    color: '#4b5563',
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 10,
-  },
-  meta: {
-    color: '#6b7280',
-    fontWeight: '700',
-    marginTop: 14,
-  },
-  panel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    borderWidth: 1,
-    marginTop: 16,
-    padding: 18,
-  },
-  panelTitle: {
-    color: '#111827',
-    fontSize: 18,
-    fontWeight: '800',
-    marginBottom: 8,
-  },
-  panelText: {
-    color: '#4b5563',
-    lineHeight: 21,
-    marginBottom: 16,
-  },
-  option: {
-    alignItems: 'center',
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 10,
-    padding: 14,
-  },
-  optionSelected: {
-    backgroundColor: '#ecfdf5',
-    borderColor: '#0f766e',
-  },
-  optionDisabled: {
-    opacity: 0.7,
-  },
-  radio: {
-    borderColor: '#9ca3af',
-    borderRadius: 9,
-    borderWidth: 2,
-    height: 18,
-    width: 18,
-  },
-  radioSelected: {
-    backgroundColor: '#0f766e',
-    borderColor: '#0f766e',
-  },
-  optionText: {
-    color: '#111827',
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  secondaryActions: {
-    gap: 10,
-    marginTop: 16,
-  },
-  secondaryButton: {
-    backgroundColor: '#ffffff',
-    borderColor: '#0f766e',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#0f766e',
-  },
-  dangerButton: {
-    backgroundColor: '#fff1f2',
-    borderColor: '#fecdd3',
-    borderWidth: 1,
-  },
-  dangerButtonText: {
-    color: '#be123c',
-  },
-});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    content: { padding: 20, paddingBottom: 36 },
+    header: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      padding: 18,
+    },
+    status: {
+      alignSelf: 'flex-start',
+      borderRadius: 8,
+      marginBottom: 12,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    activeStatus: { backgroundColor: theme.primarySoft },
+    closedStatus: { backgroundColor: theme.dangerSoft },
+    statusText: { fontSize: 12, fontWeight: '800' },
+    activeStatusText: { color: theme.primary },
+    closedStatusText: { color: theme.dangerText },
+    title: { color: theme.text, fontSize: 26, fontWeight: '800', lineHeight: 32 },
+    description: { color: theme.textMuted, fontSize: 15, lineHeight: 22, marginTop: 10 },
+    meta: { color: theme.textSubtle, fontWeight: '700', marginTop: 14 },
+    panel: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 8,
+      borderWidth: 1,
+      marginTop: 16,
+      padding: 18,
+    },
+    panelTitle: { color: theme.text, fontSize: 18, fontWeight: '800', marginBottom: 8 },
+    panelText: { color: theme.textMuted, lineHeight: 21, marginBottom: 16 },
+    option: {
+      alignItems: 'center',
+      borderColor: theme.borderStrong,
+      borderRadius: 8,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 10,
+      padding: 14,
+    },
+    optionSelected: { backgroundColor: theme.primarySoft, borderColor: theme.primary },
+    optionDisabled: { opacity: 0.7 },
+    radio: {
+      borderColor: theme.textSubtle,
+      borderRadius: 9,
+      borderWidth: 2,
+      height: 18,
+      width: 18,
+    },
+    radioSelected: { backgroundColor: theme.primary, borderColor: theme.primary },
+    optionText: { color: theme.text, flex: 1, fontSize: 15, fontWeight: '700' },
+    secondaryActions: { gap: 10, marginTop: 16 },
+    secondaryButton: { backgroundColor: theme.surface, borderColor: theme.primary, borderWidth: 1 },
+    secondaryButtonText: { color: theme.primary },
+    dangerButton: { backgroundColor: theme.dangerSoft, borderColor: theme.dangerBorder, borderWidth: 1 },
+    dangerButtonText: { color: theme.danger },
+  });

@@ -1,4 +1,5 @@
 import { TextInput, View, StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
+import { useAppTheme } from '../theme/AppThemeContext';
 
 type InputProps = {
   label?: string;
@@ -11,16 +12,22 @@ type InputProps = {
 };
 
 export function Input({ label, placeholder, value, onChangeText, secureTextEntry, style, inputStyle }: InputProps) {
+  const { theme } = useAppTheme();
+
   return (
     <View style={[styles.container, style]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? <Text style={[styles.label, { color: theme.text }]}>{label}</Text> : null}
       <TextInput
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         placeholder={placeholder}
-        placeholderTextColor="#808080"
-        style={[styles.input, inputStyle]}
+        placeholderTextColor={theme.inputPlaceholder}
+        style={[
+          styles.input,
+          { backgroundColor: theme.surface, borderColor: theme.borderStrong, color: theme.text },
+          inputStyle,
+        ]}
       />
     </View>
   );
@@ -32,15 +39,11 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-    color: '#222',
     fontWeight: '600',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
     borderRadius: 8,
     padding: 14,
-    color: '#111',
-    backgroundColor: '#fff',
   },
 });
