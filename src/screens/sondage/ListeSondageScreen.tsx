@@ -1,17 +1,26 @@
-import { useCallback, useState } from 'react';
-import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { Button } from '../../components/Button';
-import { CardSondage } from '../../components/CardSondage';
-import { Loader } from '../../components/Loader';
-import { fetchSondages } from '../../services/sondageService';
-import { useAppTheme } from '../../theme/AppThemeContext';
-import { AppTheme } from '../../theme/colors';
-import { Sondage } from '../../types';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
+import {
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Button } from "../../components/Button";
+import { CardSondage } from "../../components/CardSondage";
+import { Loader } from "../../components/Loader";
+import { fetchSondages } from "../../services/sondageService";
+import { useAppTheme } from "../../theme/AppThemeContext";
+import { AppTheme } from "../../theme/colors";
+import { Sondage } from "../../types";
 
 function isSondageDisponible(sondage: Sondage) {
   const isOpen = sondage.est_actif !== false && sondage.play !== false;
-  const isExpired = sondage.date_fermeture ? new Date(sondage.date_fermeture).getTime() < Date.now() : false;
+  const isExpired = sondage.date_fermeture
+    ? new Date(sondage.date_fermeture).getTime() < Date.now()
+    : false;
 
   return isOpen && !isExpired;
 }
@@ -37,11 +46,14 @@ export default function ListeSondageScreen({ navigation }: any) {
   useFocusEffect(
     useCallback(() => {
       loadSondages();
-    }, [loadSondages])
+    }, [loadSondages]),
   );
 
   const availableCount = sondages.filter(isSondageDisponible).length;
-  const optionCount = sondages.reduce((total, item) => total + (item.option?.length ?? 0), 0);
+  const optionCount = sondages.reduce(
+    (total, item) => total + (item.option?.length ?? 0),
+    0,
+  );
 
   if (loading) {
     return <Loader />;
@@ -66,12 +78,10 @@ export default function ListeSondageScreen({ navigation }: any) {
         }
         ListHeaderComponent={
           <View>
-            <Text style={styles.kicker}>FeedBack Anonyme</Text>
-            <Text style={styles.title}>Liste des sondages crees</Text>
             <View style={styles.actions}>
               <Button
                 title="Creer un sondage"
-                onPress={() => navigation.navigate('CreateSondage')}
+                onPress={() => navigation.navigate("CreateSondage")}
                 style={styles.primaryAction}
               />
             </View>
@@ -95,10 +105,14 @@ export default function ListeSondageScreen({ navigation }: any) {
         renderItem={({ item }) => (
           <CardSondage
             sondage={item}
-            onPress={() => navigation.navigate('DetailSondage', { sondageId: item.id })}
+            onPress={() =>
+              navigation.navigate("DetailSondage", { sondageId: item.id })
+            }
           />
         )}
-        ListEmptyComponent={<Text style={styles.empty}>Aucun sondage cree.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Aucun sondage cree.</Text>
+        }
       />
     </SafeAreaView>
   );
@@ -117,14 +131,14 @@ const createStyles = (theme: AppTheme) =>
     kicker: {
       color: theme.primary,
       fontSize: 13,
-      fontWeight: '700',
+      fontWeight: "700",
       marginBottom: 8,
-      textTransform: 'uppercase',
+      textTransform: "uppercase",
     },
     title: {
       color: theme.text,
       fontSize: 28,
-      fontWeight: '800',
+      fontWeight: "800",
       lineHeight: 34,
     },
     actions: {
@@ -135,7 +149,7 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: 8,
     },
     metrics: {
-      flexDirection: 'row',
+      flexDirection: "row",
       gap: 10,
       marginTop: 18,
     },
@@ -150,7 +164,7 @@ const createStyles = (theme: AppTheme) =>
     metricValue: {
       color: theme.text,
       fontSize: 22,
-      fontWeight: '800',
+      fontWeight: "800",
     },
     metricLabel: {
       color: theme.textSubtle,
@@ -160,13 +174,13 @@ const createStyles = (theme: AppTheme) =>
     sectionTitle: {
       color: theme.text,
       fontSize: 18,
-      fontWeight: '800',
+      fontWeight: "800",
       marginBottom: 12,
       marginTop: 24,
     },
     empty: {
       color: theme.textSubtle,
       marginTop: 24,
-      textAlign: 'center',
+      textAlign: "center",
     },
   });

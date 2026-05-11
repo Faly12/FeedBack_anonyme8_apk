@@ -1,5 +1,11 @@
-import { Pressable, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { useAppTheme } from '../theme/AppThemeContext';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
+import { useAppTheme } from "../theme/AppThemeContext";
 
 type ButtonProps = {
   title: string;
@@ -9,14 +15,26 @@ type ButtonProps = {
   textStyle?: TextStyle;
 };
 
-export function Button({ title, onPress, disabled, style, textStyle }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  disabled,
+  style,
+  textStyle,
+}: ButtonProps) {
   const { theme } = useAppTheme();
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      style={[styles.button, { backgroundColor: theme.primary }, disabled && styles.disabled, style]}>
+      style={[
+        styles.button,
+        { backgroundColor: "#2563eb" },
+        disabled && styles.disabled,
+        style,
+      ]}
+    >
       <Text style={[styles.text, textStyle]}>{title}</Text>
     </Pressable>
   );
@@ -27,14 +45,14 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   disabled: {
     opacity: 0.6,
   },
   text: {
-    color: '#fff',
-    fontWeight: '800',
+    color: "#fff",
+    fontWeight: "800",
   },
 });

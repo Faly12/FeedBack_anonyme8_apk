@@ -1,5 +1,12 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
-import { useAppTheme } from '../theme/AppThemeContext';
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { useAppTheme } from "../theme/AppThemeContext";
 
 export type AppNotification = {
   id: string;
@@ -15,54 +22,86 @@ type NotificationContextValue = {
   addNotification: (title: string, message: string) => void;
   markAllRead: () => void;
   clearNotifications: () => void;
+  removeNotification: (id: string) => void;
 };
 
-const NotificationContext = createContext<NotificationContextValue | null>(null);
+const NotificationContext = createContext<NotificationContextValue | null>(
+  null,
+);
 
 export function NotificationProvider({ children }: PropsWithChildren) {
   const { notificationsEnabled } = useAppTheme();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
-  const addNotification = useCallback((title: string, message: string) => {
-    if (!notificationsEnabled) {
-      return;
-    }
+  const addNotification = useCallback(
+    (title: string, message: string) => {
+      if (!notificationsEnabled) {
+        return;
+      }
 
-    setNotifications((current) => [
-      {
-        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        title,
-        message,
-        createdAt: new Date().toISOString(),
-        read: false,
-      },
-      ...current,
-    ]);
-  }, [notificationsEnabled]);
+      setNotifications((current) => [
+        {
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          title,
+          message,
+          createdAt: new Date().toISOString(),
+          read: false,
+        },
+        ...current,
+      ]);
+    },
+    [notificationsEnabled],
+  );
 
   const markAllRead = useCallback(() => {
-    setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+    setNotifications((current) =>
+      current.map((item) => ({ ...item, read: true })),
+    );
   }, []);
 
   const clearNotifications = useCallback(() => {
     setNotifications([]);
   }, []);
 
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((current) => current.filter((item) => item.id !== id));
+  }, []);
+
   const unreadCount = notifications.filter((item) => !item.read).length;
 
   const value = useMemo(
-    () => ({ notifications, unreadCount, addNotification, markAllRead, clearNotifications }),
-    [addNotification, clearNotifications, markAllRead, notifications, unreadCount]
+    () => ({
+      notifications,
+      unreadCount,
+      addNotification,
+      markAllRead,
+      clearNotifications,
+      removeNotification,
+    }),
+    [
+      addNotification,
+      clearNotifications,
+      markAllRead,
+      notifications,
+      unreadCount,
+      removeNotification,
+    ],
   );
 
-  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
+  return (
+    <NotificationContext.Provider value={value}>
+      {children}
+    </NotificationContext.Provider>
+  );
 }
 
 export function useNotifications() {
   const context = useContext(NotificationContext);
 
   if (!context) {
-    throw new Error('useNotifications must be used inside NotificationProvider');
+    throw new Error(
+      "useNotifications must be used inside NotificationProvider",
+    );
   }
 
   return context;

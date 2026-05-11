@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -8,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../hooks/useAuth";
 import { useNotifications } from "../notifications/NotificationContext";
 import { useAppTheme } from "../theme/AppThemeContext";
@@ -20,7 +20,7 @@ function formatTime(value: string) {
   });
 }
 
-export function NotificationBell() {
+export function HeaderRight() {
   const { theme } = useAppTheme();
   const { user } = useAuth();
   const {
@@ -41,28 +41,35 @@ export function NotificationBell() {
     return letters || null;
   }, [user]);
 
+  const userName = useMemo(() => {
+    return user?.user_metadata?.nom ?? user?.email ?? "Utilisateur";
+  }, [user]);
+
   const openPanel = () => {
     setVisible(true);
     markAllRead();
   };
 
   return (
-    <>
-      <Pressable onPress={openPanel} style={styles.iconButton}>
-        <Ionicons name="notifications-outline" size={24} color={theme.text} />
-        {userInitials ? (
-          <View style={styles.initialsBadge}>
-            <Text style={styles.initialsText}>{userInitials}</Text>
-          </View>
-        ) : null}
-        {unreadCount > 0 ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </Text>
-          </View>
-        ) : null}
-      </Pressable>
+    <React.Fragment>
+      <View style={styles.headerContainer}>
+        <Text style={styles.userName}>{userName}</Text>
+        <Pressable onPress={openPanel} style={styles.iconButton}>
+          <Ionicons name="notifications-outline" size={24} color={theme.text} />
+          {userInitials ? (
+            <View style={styles.initialsBadge}>
+              <Text style={styles.initialsText}>{userInitials}</Text>
+            </View>
+          ) : null}
+          {unreadCount > 0 ? (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Text>
+            </View>
+          ) : null}
+        </Pressable>
+      </View>
 
       <Modal
         visible={visible}
@@ -125,20 +132,30 @@ export function NotificationBell() {
           </Pressable>
         </Pressable>
       </Modal>
-    </>
+    </React.Fragment>
   );
 }
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
+    headerContainer: {
+      alignItems: "center",
+      flexDirection: "row",
+      gap: 8,
+      marginRight: 8,
+      marginTop: 5,
+    },
+    userName: {
+      color: theme.text,
+      fontSize: 14,
+      fontWeight: "700",
+    },
     iconButton: {
       alignItems: "center",
       flexDirection: "row",
       gap: 8,
       height: 44,
       justifyContent: "center",
-      marginRight: 8,
-      marginTop: 5,
       paddingHorizontal: 8,
     },
     badge: {

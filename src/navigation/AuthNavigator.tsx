@@ -1,8 +1,8 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from '../screens/auth/LoginScreen';
-import RegisterScreen from '../screens/auth/RegisterScreen';
-import { useAppTheme } from '../theme/AppThemeContext';
-import { NotificationBell } from '../components/NotificationBell';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { HeaderRight } from "../components/HeaderRight";
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
+import { useAppTheme } from "../theme/AppThemeContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,12 +15,21 @@ export default function AuthNavigator() {
         contentStyle: { backgroundColor: theme.background },
         headerStyle: { backgroundColor: theme.surface },
         headerTintColor: theme.text,
-        headerTitleStyle: { color: theme.text, fontWeight: '700' },
-        headerRight: () => <NotificationBell />,
+        headerTitleStyle: { color: theme.text, fontWeight: "700" },
+        headerRight: () => <HeaderRight />,
         headerShadowVisible: false,
-      }}>
-      <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Connexion' }} />
-      <Stack.Screen name="Register" component={RegisterScreen} options={{ title: "S'inscrire" }} />
+      }}
+    >
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ title: "Connexion" }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: "S'inscrire" }}
+      />
     </Stack.Navigator>
   );
 }

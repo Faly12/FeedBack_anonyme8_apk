@@ -50,7 +50,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.kicker}>Parametres</Text>
+        
         <Text style={styles.title}>Preferences application</Text>
 
         <View style={styles.section}>
