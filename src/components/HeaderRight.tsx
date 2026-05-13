@@ -56,11 +56,11 @@ export function HeaderRight() {
         <Text style={styles.userName}>{userName}</Text>
         <Pressable onPress={openPanel} style={styles.iconButton}>
           <Ionicons name="notifications-outline" size={24} color={theme.text} />
-          {userInitials ? (
-            <View style={styles.initialsBadge}>
-              <Text style={styles.initialsText}>{userInitials}</Text>
-            </View>
-          ) : null}
+       {/* {userInitials ? (
+          <View style={styles.initialsBadge}>
+            <Text style={styles.initialsText}>{userInitials}</Text>
+          </View>
+        ) : null} */}
           {unreadCount > 0 ? (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>

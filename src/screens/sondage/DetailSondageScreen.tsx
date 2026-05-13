@@ -67,6 +67,8 @@ export default function DetailSondageScreen({ route, navigation }: any) {
     checkVoteStatus();
   }, [sondage, user]);
 
+
+
   const sortedOptions = useMemo(
     () =>
       [...(sondage?.option ?? [])].sort(
@@ -209,8 +211,8 @@ export default function DetailSondageScreen({ route, navigation }: any) {
           <View style={styles.panel}>
             <Text style={styles.panelTitle}>Authentification requise</Text>
             <Text style={styles.panelText}>
-              Ce sondage demande une cle avant le vote. Pour la demo, essayez:{" "}
-              {sondage.passkey}
+              Ce sondage demande une cle avant le vote. Demandez au createur du sondage de vous fournir la cle d'acces pour pouvoir participer.
+              ou faire une sca de code QR si disponible.
             </Text>
             <Input
               label="Cle d'acces"
