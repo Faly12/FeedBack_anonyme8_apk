@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { FetchSondageByUserId } from "@/src/services/sondageService";
 import { useNavigation } from "@react-navigation/native";
 
-function ListeSondagesUtilisateur({ userId }: { userId: string }) {
+function ListSondagesUser({ userId }: { userId: string }) {
   const [sondages, setSondages] = useState<Sondage[]>([]);
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -27,7 +27,6 @@ function ListeSondagesUtilisateur({ userId }: { userId: string }) {
   }, [userId]);
 
   const handleDetailSondage = (id: string) => {
-    // ✅ Navigation depuis le Profil vers l'écran de détail/édition
     navigation.navigate("Home", {
       screen: "EditSondage",
       params: { id: id },
