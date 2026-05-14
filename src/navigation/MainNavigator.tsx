@@ -8,6 +8,7 @@ import CreateSondageScreen from "../screens/sondage/CreateSondageScreen";
 import DetailSondageScreen from "../screens/sondage/DetailSondageScreen";
 import ListeSondageScreen from "../screens/sondage/ListeSondageScreen";
 import ResultatScreen from "../screens/sondage/ResultatScreen";
+import EditSondageScreen from "../screens/sondage/EditSondageScreen"; // Si vous voulez un écran séparé
 import { useAppTheme } from "../theme/AppThemeContext";
 
 const Tab = createBottomTabNavigator();
@@ -46,6 +47,12 @@ function SondageStack() {
         name="Resultat"
         component={ResultatScreen}
         options={{ title: "Résultats" }}
+      />
+      {/* Optionnel: si vous voulez un écran de gestion séparé */}
+      <Stack.Screen
+        name="EditSondage"
+        component={EditSondageScreen}
+        options={{ title: "Modifier le sondage" }}
       />
     </Stack.Navigator>
   );
