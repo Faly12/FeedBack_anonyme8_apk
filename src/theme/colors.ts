@@ -23,6 +23,7 @@ export const themes = {
     surface: '#111827',
     surfaceMuted: '#1f2937',
     primary: '#2dd4bf',
+    dark: '#0f172a',
     primarySoft: '#134e4a',
     text: '#f8fafc',
     textMuted: '#cbd5e1',
