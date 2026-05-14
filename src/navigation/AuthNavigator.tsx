@@ -1,5 +1,4 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HeaderRight } from "../components/HeaderRight";
 import LoginScreen from "../screens/auth/LoginScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
 import { useAppTheme } from "../theme/AppThemeContext";
@@ -16,7 +15,6 @@ export default function AuthNavigator() {
         headerStyle: { backgroundColor: theme.surface },
         headerTintColor: theme.text,
         headerTitleStyle: { color: theme.text, fontWeight: "700" },
-        headerRight: () => <HeaderRight />,
         headerShadowVisible: false,
       }}
     >
