@@ -44,10 +44,13 @@ export default function LoginScreen({ navigation }: any) {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <Button title={loading ? 'Connexion...' : 'Se connecter'} onPress={handleLogin} disabled={loading} />
-        <Text style={[styles.footer, { color: theme.primary }]} onPress={() => navigation.navigate('Register')}>
-          Pas encore de compte ? Inscription
+        <Text style={[styles.footer, { color: theme.dark, alignSelf: 'flex-end',marginTop: -10, }]} onPress={() => navigation.navigate('ForgotPassword')}>
+           Mot de passe oublié ?
         </Text>
+        <Button style={[{ marginTop: 24 }]} title={loading ? 'Connexion...' : 'Se connecter'} onPress={handleLogin} disabled={loading} />
+        <Text style={[styles.footer, { color: theme.primary,marginTop: 10, }]} onPress={() => navigation.navigate('Register')}>
+           Pas encore de compte ? Inscription
+         </Text>
       </ScrollView>
     </SafeAreaView>
   );

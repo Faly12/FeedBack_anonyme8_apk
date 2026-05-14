@@ -156,7 +156,7 @@ function cloneSondage(sondage: Sondage): Sondage {
 
 export function listPrototypeSondages() {
   return sondages
-    .filter((sondage) => sondage.est_public)
+    .filter((sondage) => sondage.est_public && sondage.est_actif)
     .sort((a, b) =>
       (b.date_creation ?? "").localeCompare(a.date_creation ?? ""),
     )
