@@ -13,8 +13,14 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   const handleResetPassword = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim()) {
       Alert.alert('Email requis', 'Veuillez entrer votre adresse email.');
+      return;
+    }
+
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Email invalide', 'Veuillez entrer une adresse email valide.');
       return;
     }
 
@@ -42,10 +48,10 @@ export default function ForgotPasswordScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Mot de passe oublié</Text>
-        <Text style={styles.description}>
-          Entrez votre adresse email pour recevoir un lien de réinitialisation.
-        </Text>
-        <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} />
+         <Text style={[styles.description, { color: theme.textSubtle }]}>
+           Entrez votre adresse email pour recevoir un lien de réinitialisation.
+         </Text>
+         <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
         <Button title={loading ? 'Envoi...' : 'Envoyer le lien'} onPress={handleResetPassword} disabled={loading} />
         <Text style={[styles.footer, { color: theme.primary }]} onPress={() => navigation.goBack()}>
           Retour à la connexion
@@ -70,12 +76,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  description: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
+   description: {
+     fontSize: 14,
+     marginBottom: 24,
+     textAlign: 'center',
+   },
   footer: {
     fontWeight: '700',
     marginTop: 20,

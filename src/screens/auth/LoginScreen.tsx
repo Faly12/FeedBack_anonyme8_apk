@@ -36,7 +36,7 @@ export default function LoginScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Connexion</Text>
-        <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} />
+        <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
         <Input
           label="Mot de passe"
           placeholder="********"

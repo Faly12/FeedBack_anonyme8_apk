@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, Modal, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useAuth";
 import { useNotifications } from "../../notifications/NotificationContext";
@@ -57,6 +57,7 @@ export default function ProfileScreen() {
   const { theme } = useAppTheme();
   const { addNotification } = useNotifications();
   const styles = createStyles(theme);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleSignOut = async () => {
     addNotification("Deconnexion", "Votre session a ete fermee.");
@@ -86,8 +87,23 @@ export default function ProfileScreen() {
         {/* Liste des sondages que l'utilisateur a créé */}
         <View style={styles.sondagesSection}>
           <Text style={styles.label}>Sondages créés</Text>
-          <ListeSondagesUtilisateur userId={user?.id ?? ""} />
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.viewSondagesButton}>
+            <Text style={styles.viewSondagesButtonText}>Voir mes sondages</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Modal pour afficher la liste des sondages */}
+        <Modal visible={modalVisible} transparent={true} animationType="fade">
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseButton}>
+                <Text style={styles.modalCloseButtonText}>×</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Mes sondages</Text>
+              <ListeSondagesUtilisateur userId={user?.id ?? ""} />
+            </View>
+          </View>
+        </Modal>
       </View>
 
       <Button
@@ -174,5 +190,52 @@ const createStyles = (theme: AppTheme) =>
     },
     secondaryButtonText: {
       color: theme.primary,
+    },
+    // New styles for the modal and button
+    viewSondagesButton: {
+      padding: 12,
+      backgroundColor: theme.primary,
+      borderRadius: 6,
+      alignItems: "center",
+      marginTop: 8,
+    },
+    viewSondagesButtonText: {
+      color: theme.background,
+      fontWeight: "600",
+    },
+    modalBackground: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContainer: {
+      width: "80%",
+      maxWidth: 400,
+      backgroundColor: theme.surface,
+      borderRadius: 12,
+      padding: 24,
+    },
+    modalCloseButton: {
+      position: "absolute",
+      top: 12,
+      right: 12,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      backgroundColor: theme.border,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalCloseButtonText: {
+      color: theme.text,
+      fontWeight: "bold",
+    },
+    modalTitle: {
+      color: theme.text,
+      fontSize: 20,
+      fontWeight: "700",
+      marginBottom: 20,
+      textAlign: "center",
     },
   });
