@@ -1,4 +1,5 @@
 export type Option = {
+  label: ReactNode;
   id: string;
   libelle: string;
   id_sondage: string;

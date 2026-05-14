@@ -1,10 +1,56 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useAuth";
 import { useNotifications } from "../../notifications/NotificationContext";
 import { signOut } from "../../services/authService";
 import { useAppTheme } from "../../theme/AppThemeContext";
 import { AppTheme } from "../../theme/colors";
+import { CardSondage } from "@/src/components/CardSondage";
+import { Sondage } from "@/src/types";
+import { useState, useEffect } from "react";
+import { FetchSondageByUserId } from "@/src/services/sondageService";
+import { useNavigation } from "@react-navigation/native";
+
+function ListeSondagesUtilisateur({ userId }: { userId: string }) {
+  const [sondages, setSondages] = useState<Sondage[]>([]);
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const loadSondages = async () => {
+      const { data, error } = await FetchSondageByUserId(userId);
+      if (data) setSondages(data);
+      else console.error("Error fetching sondages:", error);
+    };
+    loadSondages();
+  }, [userId]);
+
+  const handleDetailSondage = (id: string) => {
+    // ✅ Navigation depuis le Profil vers l'écran de détail/édition
+    navigation.navigate("Home", {
+      screen: "EditSondage",
+      params: { id: id },
+    });
+  };
+
+  return (
+    <FlatList
+      data={sondages}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <CardSondage
+          sondage={item}
+          onPress={() => handleDetailSondage(item.id)}
+        />
+      )}
+      contentContainerStyle={styles.listContent}
+      ListEmptyComponent={
+        <Text style={styles.emptyText}>Aucun sondage créé</Text>
+      }
+    />
+  );
+}
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -20,30 +66,27 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Auteur du sondage</Text>
+        <Text style={styles.title}>{user?.user_metadata?.nom}</Text>
         <Text style={styles.description}>
-          Ce profil represente le compte administrateur qui cree, ferme et
-          consulte les resultats des sondages. Le votant final peut participer
-          anonymement depuis la liste des sondages.
+          Voici les informations de votre compte. Vous pouvez vous deconnecter a tout moment en cliquant sur le bouton ci-dessous.
         </Text>
 
         <View style={styles.infoRow}>
           <Text style={styles.label}>Email</Text>
-          <Text style={styles.value}>
-            {user?.email ?? "admin.prototype@feedback.local"}
-          </Text>
+          <Text style={styles.value}>{user?.email}</Text>
         </View>
+        
         <View style={styles.infoRow}>
           <Text style={styles.label}>Nom</Text>
           <Text style={[styles.value, styles.nameValue]}>
-            {user?.user_metadata?.nom ?? "Auteur du sondage"}
+            {user?.user_metadata?.nom}
           </Text>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Mode</Text>
-          <Text style={styles.value}>
-            Prototype avec donnees Supabase ou locales
-          </Text>
+        
+        {/* Liste des sondages que l'utilisateur a créé */}
+        <View style={styles.sondagesSection}>
+          <Text style={styles.label}>Sondages créés</Text>
+          <ListeSondagesUtilisateur userId={user?.id ?? ""} />
         </View>
       </View>
 
@@ -71,12 +114,7 @@ const createStyles = (theme: AppTheme) =>
       borderWidth: 1,
       marginBottom: 16,
       padding: 18,
-    },
-    kicker: {
-      color: theme.primary,
-      fontSize: 13,
-      fontWeight: "800",
-      textTransform: "uppercase",
+      flex: 1,
     },
     title: {
       color: theme.text,
@@ -95,6 +133,14 @@ const createStyles = (theme: AppTheme) =>
       marginTop: 14,
       paddingTop: 14,
     },
+    sondagesSection: {
+      borderTopColor: theme.surfaceMuted,
+      borderTopWidth: 1,
+      marginTop: 14,
+      paddingTop: 14,
+      flex: 1,
+      minHeight: 200,
+    },
     label: {
       color: theme.textSubtle,
       fontSize: 12,
@@ -110,6 +156,16 @@ const createStyles = (theme: AppTheme) =>
     nameValue: {
       fontSize: 18,
       marginTop: 10,
+    },
+    listContent: {
+      paddingVertical: 10,
+      gap: 10,
+    },
+    emptyText: {
+      color: theme.textMuted,
+      textAlign: "center",
+      marginTop: 20,
+      fontStyle: "italic",
     },
     secondaryButton: {
       backgroundColor: theme.surface,

@@ -1,18 +1,18 @@
-import { supabase } from './supabaseClient';
-import { Option, Sondage } from '../types';
+import { Option, Sondage, Vote } from '../types';
 import {
   addPrototypeSondage,
   closePrototypeSondage,
   getPrototypeSondage,
   listPrototypeSondages,
 } from './prototypeStore';
+import { supabase } from './supabaseClient';
 
 export async function fetchSondages() {
   const prototypeSondages = listPrototypeSondages();
 
   try {
     const { data, error } = await supabase
-      .from<Sondage>('sondage')
+      .from('sondage')
       .select('*, option(*)')
       .order('date_creation', { ascending: false });
 
@@ -36,7 +36,7 @@ export async function fetchSondages() {
 export async function fetchSondageById(id: string) {
   try {
     const { data, error } = await supabase
-      .from<Sondage>('sondage')
+      .from('sondage')
       .select('*, option(*)')
       .eq('id', id)
       .single();
@@ -134,4 +134,52 @@ export async function fermerSondage(id: string) {
     error: data ? null : { message: 'Impossible de fermer ce sondage.' },
     source: 'prototype' as const,
   };
+}
+export async function FetchSondageByUserId(userId: string) {
+  try {    const { data, error } = await supabase
+      .from('sondage')
+      .select('*, option(*)')
+      .eq('id_auteur', userId)
+      .order('date_creation', { ascending: false });
+    return { data, error };
+  } catch (error) {
+    console.error("Error fetching sondages by user ID:", error);
+    return { data: null, error };
+  }
+}
+// sondageService.ts
+export async function updateSondage(
+    id: string, 
+    updates: { titre?: string; description?: string }
+) {
+    const { data, error } = await supabase
+        .from("sondage")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+    
+    return { data, error };
+}
+
+export async function addOption(
+    id_sondage: string,
+    option: { libelle: string; ordre_affichage: number }
+) {
+    const { data, error } = await supabase
+        .from("option")
+        .insert({ ...option, id_sondage })
+        .select()
+        .single();
+    
+    return { data, error };
+}
+
+export async function deleteOption(id: string) {
+    const { error } = await supabase
+        .from("option")
+        .delete()
+        .eq("id", id);
+    
+    return { error };
 }
