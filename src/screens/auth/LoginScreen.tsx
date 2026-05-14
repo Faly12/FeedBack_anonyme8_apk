@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={[styles.title, { color: theme.text }]}>Connexion</Text>
+        <Text style={styles.title}>Connexion</Text>
         <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} />
         <Input
           label="Mot de passe"
@@ -62,11 +62,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 24,
-  },
+   title: {
+     fontSize: 28,
+     fontWeight: '800',
+     marginBottom: 24,
+     textAlign: 'center',
+   },
   footer: {
     fontWeight: '700',
     marginTop: 20,
