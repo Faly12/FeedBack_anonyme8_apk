@@ -46,7 +46,7 @@ export default function RegisterScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={[styles.title, { color: theme.text }]}>Creer un compte</Text>
         <Input label="Nom" placeholder="Votre nom" value={nom} onChangeText={setNom} />
-        <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} />
+        <Input label="Email" placeholder="email@example.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
         <Input
           label="Mot de passe"
           placeholder="********"

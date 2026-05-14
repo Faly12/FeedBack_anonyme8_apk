@@ -9,9 +9,11 @@ type InputProps = {
   secureTextEntry?: boolean;
   style?: ViewStyle;
   inputStyle?: TextStyle;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'number-pad' | 'decimal-pad';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 };
 
-export function Input({ label, placeholder, value, onChangeText, secureTextEntry, style, inputStyle }: InputProps) {
+export function Input({ label, placeholder, value, onChangeText, secureTextEntry, style, inputStyle, keyboardType, autoCapitalize }: InputProps) {
   const { theme } = useAppTheme();
 
   return (
@@ -23,6 +25,8 @@ export function Input({ label, placeholder, value, onChangeText, secureTextEntry
         secureTextEntry={secureTextEntry}
         placeholder={placeholder}
         placeholderTextColor={theme.inputPlaceholder}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
         style={[
           styles.input,
           { backgroundColor: theme.surface, borderColor: theme.borderStrong, color: theme.text },
